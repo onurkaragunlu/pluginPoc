@@ -13,7 +13,7 @@ version = "1.0.0"
 
 gradlePlugin {
     plugins {
-        create("downloader") {
+        create("downloaderPlugin") {
             id = "com.karagunlu.downloader"
             implementationClass = "com.karagunlu.plugins.DownloaderPlugin"
         }
@@ -29,14 +29,28 @@ publishing {
 dependencies {
     implementation(gradleApi())
     implementation(kotlin("stdlib"))
+    implementation(libs.android.gradle)
+
+    // Test dependencies
+    testImplementation(libs.junit.jupiter)
+    testImplementation(libs.junit.jupiter.api)
+    testRuntimeOnly(libs.junit.jupiter.engine)
+    testImplementation(libs.kotest.runner)
+    testImplementation(libs.kotest.assertions)
+    testImplementation(libs.mockk)
 }
 
 tasks.withType<KotlinCompile>().configureEach {
     compilerOptions {
-        jvmTarget.set(JvmTarget.JVM_17)
+        jvmTarget.set(JvmTarget.JVM_18)
         languageVersion.set(KotlinVersion.KOTLIN_2_0)
         apiVersion.set(KotlinVersion.KOTLIN_2_0)
     }
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_18
+    targetCompatibility = JavaVersion.VERSION_18
 }
 
 tasks.named<Test>("test") {
