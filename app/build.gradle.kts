@@ -5,19 +5,21 @@ plugins {
     alias(libs.plugins.downloader)
 }
 
+
 downloader {
-    baseUrl = "https://example.com/api"
+    baseUrl.set("https://example.com/api")
     download()
 }
 
+
 android {
     namespace = "com.karagunlu.pluginpoc"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.karagunlu.pluginpoc"
         minSdk = 24
-        targetSdk = 34
+        targetSdk = 35
         versionCode = 1
         versionName = "1.0"
 
@@ -34,11 +36,11 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_18
+        targetCompatibility = JavaVersion.VERSION_18
     }
     kotlinOptions {
-        jvmTarget = "11"
+        jvmTarget = "18"
     }
     buildFeatures {
         compose = true
