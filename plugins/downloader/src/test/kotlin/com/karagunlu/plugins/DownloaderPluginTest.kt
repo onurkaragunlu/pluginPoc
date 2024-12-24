@@ -1,8 +1,11 @@
 package com.karagunlu.plugins
 
 import com.android.build.gradle.BaseExtension
+import io.kotest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.mockk
+import org.gradle.api.DefaultTask
+import org.gradle.api.Named
 import org.gradle.api.Project
 import org.gradle.api.model.ObjectFactory
 import org.gradle.testfixtures.ProjectBuilder
@@ -23,24 +26,31 @@ class DownloaderPluginTest {
     @BeforeEach
     fun setUp() {
         project = ProjectBuilder.builder().build()
-        project.plugins.apply("com.android.library")
-        project.plugins.apply("org.jetbrains.kotlin.android")
+        project.pluginManager.apply("com.android.library")
+        project.pluginManager.apply("org.jetbrains.kotlin.android")
+        
         val androidExtension = project.extensions.getByType(BaseExtension::class.java)
         androidExtension.compileSdkVersion(35)
         androidExtension.namespace = "com.karagunlu.pluginpoc"
+        
         applyDownloadPlugin()
     }
 
     @Test
-    fun `da`() {
+    fun `copyFileToSrc task should depends on unzipFile`() {
+        project.getTasksByName("tasks", false)
+        val copyTask = project.tasks.getByName(TASK_COPY_TO_SRC).dependsOn.first() as Named
 
+        copyTask.name shouldBe TASK_UNZIP
     }
+
+
 
     private fun applyDownloadPlugin() {
         every { mockObjectFactory.newInstance(DefaultDownloadHandler::class.java) } returns mockDownloadHandler
         val plugin = DownloaderPlugin(objectFactory = mockObjectFactory)
         plugin.apply(project)
-        val extension = project.extensions.getByName("downloader") as DownloaderExtension
+        val extension = project.extensions.getByName(EXTENSION_NAME) as DownloaderExtension
         extension.baseUrl.set(baseUrl)
         extension.startDownload.set(true)
     }

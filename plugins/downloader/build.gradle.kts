@@ -32,12 +32,15 @@ dependencies {
     implementation(libs.android.gradle)
 
     // Test dependencies
+    testImplementation(gradleApi())
     testImplementation(libs.junit.jupiter)
     testImplementation(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
     testImplementation(libs.kotest.runner)
     testImplementation(libs.kotest.assertions)
     testImplementation(libs.mockk)
+    testImplementation(gradleTestKit())
+    testImplementation(libs.kotlin.gradle)
 }
 
 tasks.withType<KotlinCompile>().configureEach {

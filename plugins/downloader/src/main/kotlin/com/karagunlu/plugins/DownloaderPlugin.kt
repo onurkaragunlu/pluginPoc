@@ -15,6 +15,11 @@ import java.io.File
 import javax.inject.Inject
 
 private const val GROUP = "DownloadFile"
+const val TASK_DOWNLOAD = "downloadTask"
+private const val TASK_VALIDATE_URL = "validateUrl"
+const val TASK_UNZIP = "unzipFile"
+const val TASK_COPY_TO_SRC = "copyFileToSrc"
+const val EXTENSION_NAME = "downloader"
 
 class DownloaderPlugin @Inject constructor(
     private val objectFactory: ObjectFactory,
@@ -40,25 +45,24 @@ class DownloaderPlugin @Inject constructor(
     }
 
     private fun Project.downloadPluginExtension() =
-        extensions.create<DownloaderExtension>("downloader")
+        extensions.create<DownloaderExtension>(EXTENSION_NAME)
 }
 
 fun Project.downloadFile(url: String, downloadHandler: DownloadHandler) {
-    tasks.register("downloadTask") {
+    tasks.register(TASK_DOWNLOAD) {
         group = GROUP
         logger.lifecycle("Configuration Phase -downloadFile")
         doLast {
             downloadHandler.startDownload(url)
         }
     }.dependsOn(validateUrlTask(url, downloadHandler))
-
 }
 
 fun Project.validateUrlTask(
     url: String,
     downloadHandler: DownloadHandler
 ): TaskProvider<Task> {
-    return tasks.register("validateUrl") {
+    return tasks.register(TASK_VALIDATE_URL) {
         logger.lifecycle("Configuration Phase - validateUrlTask ")
         doLast {
             downloadHandler.validateUrl(url)
@@ -67,13 +71,13 @@ fun Project.validateUrlTask(
 }
 
 fun Project.copyToSourceFolder() {
-    val inputdir = tasks.named<Copy>("unzipFile").flatMap { task ->
+    val inputdir = tasks.named<Copy>(TASK_UNZIP).flatMap { task ->
         provider { task.destinationDir }
     }
     logger.lifecycle("${inputdir.get()}")
     val outputDir = layout.projectDirectory.dir("src/debug/file")
 
-    tasks.register<Copy>("copyFileToSrc") {
+    tasks.register<Copy>(TASK_COPY_TO_SRC) {
         inputs.dir(inputdir)
         outputs.dir(outputDir)
         from(inputdir.get())
@@ -82,9 +86,9 @@ fun Project.copyToSourceFolder() {
 }
 
 fun Project.unzipFile() {
-    tasks.register<Copy>("unzipFile") {
+    tasks.register<Copy>(TASK_UNZIP) {
         createFakeFile()
-    }.dependsOn("downloadTask")
+    }.dependsOn(TASK_DOWNLOAD)
 }
 
 private fun Copy.createFakeFile() {
@@ -92,18 +96,15 @@ private fun Copy.createFakeFile() {
     val targetDir = project.layout.buildDirectory.dir("build/unzipfile").get().asFile
     val fileName = "example.txt"
 
-    // Create the source directory if it doesn't exist
     if (!sourceDir.exists()) {
         sourceDir.mkdirs()
     }
 
-    // Create the file
     val file = File(sourceDir, fileName)
     if (!file.exists()) {
         file.writeText("Hello, this is a generated file.")
         logger.lifecycle("File created at: ${file.absolutePath}")
     }
-    // Ensure the target directory exists
     if (!targetDir.exists()) {
         targetDir.mkdirs()
     }
