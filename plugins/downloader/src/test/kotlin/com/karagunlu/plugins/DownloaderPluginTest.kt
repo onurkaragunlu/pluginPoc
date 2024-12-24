@@ -1,8 +1,10 @@
 package com.karagunlu.plugins
 
 import com.android.build.gradle.BaseExtension
+import io.kotest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.mockk
+import org.gradle.api.Named
 import org.gradle.api.Project
 import org.gradle.api.model.ObjectFactory
 import org.gradle.testfixtures.ProjectBuilder
@@ -32,9 +34,12 @@ class DownloaderPluginTest {
     }
 
     @Test
-    fun `da`() {
-
+    fun `copyFileToSrc task should depends on unzipFile`() {
+        project.getTasksByName("tasks", false)
+        val taskName = project.tasks.getByName("copyFileToSrc").dependsOn.first() as Named
+        taskName.name shouldBe "copyFileToSrc"
     }
+
 
     private fun applyDownloadPlugin() {
         every { mockObjectFactory.newInstance(DefaultDownloadHandler::class.java) } returns mockDownloadHandler

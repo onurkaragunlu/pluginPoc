@@ -38,6 +38,7 @@ dependencies {
     testImplementation(libs.kotest.runner)
     testImplementation(libs.kotest.assertions)
     testImplementation(libs.mockk)
+    testImplementation(gradleTestKit())
 }
 
 tasks.withType<KotlinCompile>().configureEach {
