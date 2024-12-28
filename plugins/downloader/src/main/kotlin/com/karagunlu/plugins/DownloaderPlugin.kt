@@ -73,15 +73,12 @@ fun Project.validateUrlTask(
 fun Project.copyToSourceFolder(downloadHandler: DownloadHandler) {
     val unzipTask = tasks.named<Copy>(TASK_UNZIP)
     val inputdir = unzipTask.map { it.destinationDir }
-    logger.lifecycle("${inputdir.get()}")
     val outputDir = layout.projectDirectory.dir("src/debug/file")
 
     tasks.register<Copy>(TASK_COPY_TO_SRC) {
         inputs.dir(inputdir)
         outputs.dir(outputDir)
-        logger.lifecycle("${inputdir.get()}")
-        logger.lifecycle(outputDir.asFile.path)
-        downloadHandler.copyFile(this, inputdir.get(), outputDir)
+        downloadHandler.copyFile(this@register, inputdir.get(), outputDir)
     }
 }
 
@@ -108,6 +105,11 @@ private fun Copy.createFakeFile() {
     if (!targetDir.exists()) {
         targetDir.mkdirs()
     }
+    inputs.dir(sourceDir)
+    outputs.dir(targetDir)
     from(sourceDir)
     into(targetDir)
+    doLast {
+        println("Files copied.")
+    }
 }

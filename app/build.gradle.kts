@@ -7,7 +7,7 @@ plugins {
 
 
 downloader {
-    baseUrl.set("https://example.com/api")
+    baseUrl = "https://example.com/api"
     download()
 }
 
