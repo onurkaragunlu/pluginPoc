@@ -10,6 +10,7 @@ import org.gradle.api.Named
 import org.gradle.api.Project
 import org.gradle.api.file.Directory
 import org.gradle.api.model.ObjectFactory
+import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Copy
 import org.gradle.testfixtures.ProjectBuilder
 import org.junit.jupiter.api.BeforeEach
@@ -111,10 +112,10 @@ class DownloaderPluginTest {
         //with out this
         //No copy destination directory has been specified, use 'into' to specify a target directory.
         every {
-            mockDownloadHandler.copyFile(any<Copy>(), any<File>(), any<Directory>())
+            mockDownloadHandler.copyFile(any<Copy>(), any<Provider<File>>(), any<Directory>())
         } answers {
             val task = firstArg<Copy>()
-            val input = secondArg<File>()
+            val input = secondArg<Provider<File>>()
             val output = lastArg<Directory>()
             task.from(input)
             task.into(output)

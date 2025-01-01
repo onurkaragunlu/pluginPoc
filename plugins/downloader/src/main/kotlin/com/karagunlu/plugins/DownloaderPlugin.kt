@@ -78,7 +78,7 @@ fun Project.copyToSourceFolder(downloadHandler: DownloadHandler) {
     tasks.register<Copy>(TASK_COPY_TO_SRC) {
         inputs.dir(inputdir)
         outputs.dir(outputDir)
-        downloadHandler.copyFile(this@register, inputdir.get(), outputDir)
+        downloadHandler.copyFile(this@register, inputdir, outputDir)
     }
 }
 

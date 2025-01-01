@@ -1,6 +1,7 @@
 package com.karagunlu.plugins
 
 import org.gradle.api.file.Directory
+import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Copy
 import java.io.File
 
@@ -10,7 +11,7 @@ import java.io.File
 interface DownloadHandler {
     fun startDownload(url: String)
     fun validateUrl(url: String)
-    fun copyFile(copy: Copy, input: File, output: Directory)
+    fun copyFile(copy: Copy, input: Provider<File>, output: Directory)
 }
 
 open class DefaultDownloadHandler : DownloadHandler {
@@ -22,7 +23,7 @@ open class DefaultDownloadHandler : DownloadHandler {
         println("Validating Url...")
     }
 
-    override fun copyFile(copy: Copy, input: File, output: Directory) {
+    override fun copyFile(copy: Copy, input: Provider<File>, output: Directory) {
         println("Copy Files...")
         copy.from(input)
         copy.into(output)
